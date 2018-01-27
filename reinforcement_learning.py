@@ -7,17 +7,7 @@ from load_data import fetch_data, plot_prices
 import numpy as np
 import tensorflow as tf
 
-
-class DecisionPolicy:
-
-    def select_action(self, current_state, step):
-        pass
-
-    def update_q(self, state, action, reward, next_state):
-        pass
-
-
-class QLearningDecisionPolicy(DecisionPolicy):
+class QLearningDecisionPolicy:
 
     def __init__(self, actions, input_dim):
         self.epsilon = 0.95
@@ -26,9 +16,9 @@ class QLearningDecisionPolicy(DecisionPolicy):
         self.actions = actions
         output_dim = len(actions)
 
-        h1_dim = 100
-        h2_dim = 50
-        h3_dim = 25
+        h1_dim = 200
+        h2_dim = 100
+        h3_dim = 50
 
         self.x = tf.placeholder(tf.float32, [None, input_dim])
         self.y = tf.placeholder(tf.float32, [output_dim])
@@ -51,7 +41,7 @@ class QLearningDecisionPolicy(DecisionPolicy):
 
         loss = tf.square(self.y - self.q)
 
-        self.train_op = tf.train.AdagradOptimizer(0.01).minimize(loss)
+        self.train_op = tf.train.AdamOptimizer(0.01).minimize(loss)
 
         self.sess = tf.Session()
         self.sess.run(tf.global_variables_initializer())
@@ -135,10 +125,10 @@ def run_simulations(policy, budget, num_products, prices, hist, fee=0.003):
 
 
 if __name__ == "__main__":
-    prices = fetch_data("ETH-USD", 3, datetime(2016, 6, 1), datetime(2018, 1, 25), 5, "crypto_prices.npy")
+    prices = fetch_data("ETH-USD", 3, datetime(2016, 6, 1), datetime(2018, 1, 25), 1, "crypto_prices_1min.npy")
 
     n = len(prices)
-    n_train = int(n * 0.80)
+    n_train = int(n * 0.90)
     train_prices = prices[:n_train]
     test_prices = prices[n_train:]
     print(train_prices)
@@ -147,7 +137,7 @@ if __name__ == "__main__":
     plot_prices(train_prices, test_prices)
 
     actions = ['Buy', 'Sell', 'Hold']
-    hist = 100
+    hist = 400
     policy = QLearningDecisionPolicy(actions, hist + 2)
     budget = 100000.0
     num_products = 0
