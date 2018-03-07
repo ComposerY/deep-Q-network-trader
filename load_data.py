@@ -81,6 +81,6 @@ def plot_prices(train_prices, test_prices=None):
 
 
 if __name__ == "__main__":
-    r = fetch_data("ETH-USD", 3, datetime(2016, 6, 1), datetime(2018, 1, 25), 5, "crypto_prices.npy")
+    r = fetch_data("ETH-USD", 3, datetime(2016, 6, 1), datetime(2018, 1, 25), 5, "crypto_prices_5min.npy")
     print(r)
     plot_prices(r)
